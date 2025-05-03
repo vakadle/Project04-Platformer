@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
     public float jumpForce = 12f;
+
     [Tooltip("Ground check: Empty GameObject pod hráčem")]
     public Transform groundCheck;
     public float groundCheckRadius = 0.1f;
@@ -33,10 +34,16 @@ public class PlayerController : MonoBehaviour
         if (h > 0.1f) transform.localScale = Vector3.one;
         else if (h < -0.1f) transform.localScale = new Vector3(-1, 1, 1);
 
-        // 3) Skok
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-        anim.SetBool("Grounded", isGrounded);
+        // 3) Ground check
+        isGrounded = Physics2D.OverlapCircle(
+            groundCheck.position,
+            groundCheckRadius,
+            groundLayer
+        );
+        // POZOR: parametr musí přesně odpovídat názvu v Animatoru!
+        anim.SetBool("IsGrounded", isGrounded);
 
+        // 4) Skok
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
@@ -44,7 +51,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // (volitelné) vizualizace v Scene view
+    // (volitelné) vizualizace checku v Scene view
     void OnDrawGizmosSelected()
     {
         if (groundCheck != null)
